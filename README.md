@@ -1,7 +1,6 @@
-## ELK Stack (Filelogs -> Beats -> Logstash -> ELasticSeach -> Kibana.)
+## ELK Stack (Filelogs -> Beats -> Logstash -> ElasticSeach -> Kibana.)
 [![Banner](banner.png)]()  
 ##### Configure uma pilha ELK para sua central de SIEM, monitoramento de logs e muito mais ! 
-
 
 # Criando ambiente para instalação com multipass:
 > O objetivo desta seção é utilizar o snap para instalar o multipass para que possamos obter uma vm ubuntu rapida e facil para implantar o ```ELK stack```.  
