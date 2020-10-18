@@ -1,4 +1,4 @@
-# ELK Stack (ElasticSearch, Logstash, Kibana e Beats.)
+# ELK Stack (Beats -> LOgstash -> ELasticSeach -> Kibana.)
 [![Banner](banner.png)]()  
 ##### Configure uma pilha ELK para sua central de SIEM, monitoramento de logs e muito mais ! 
 
