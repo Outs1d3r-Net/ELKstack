@@ -349,7 +349,7 @@ $ sudo iptables -A INPUT -p tcp --destination-port 5601 -j DROP
 #### Liberando acesso para o nginx:
 > Altere o ip 10.51.127.90 para o ip do servidor do nginx.  
 ```
-$ sudo iptables -I INPUT -p tcp --destination-port 9200 -s 10.51.127.90 -j ACCEPT
+$ sudo iptables -I INPUT -p tcp --destination-port 5601 -s 10.51.127.90 -j ACCEPT
 ```
 #### Salve as regras de firewall e reinicie o kibana:  
 ```
