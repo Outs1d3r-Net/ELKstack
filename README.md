@@ -282,8 +282,8 @@ $ sudo service filebeat restart
 ```
 ## Configurando Elk em nós separados:
 > O objetivo desta sessão é instalar cada um dos programas que forma a pilha elk em servidores dedicados de forma segura.  
-> Para isso configuramos alguns dos hosts para serem acessados por qualquer maquina na rede e depois restringimos o acesso com o iptables.
-> Esta configuração fará com que o ELK seja acessivel somente pelo proxy nginx com usuario e senha configurados no proxy.
+> Para isso configuramos alguns dos hosts para serem acessados por qualquer maquina na rede e depois restringimos o acesso com o iptables.  
+> Esta configuração fará com que o ELK seja acessivel somente pelo proxy nginx com usuario e senha configurados no proxy.  
 
 ### Criando hosts com multipass:
 ```
@@ -347,7 +347,7 @@ server.host: "0.0.0.0"
 $ sudo iptables -A INPUT -p tcp --destination-port 5601 -j DROP
 ```
 #### Liberando acesso para o nginx:
-> Altere o ip 10.51.127.90 para o ip do servidor do nginx.
+> Altere o ip 10.51.127.90 para o ip do servidor do nginx.  
 ```
 $ sudo iptables -I INPUT -p tcp --destination-port 9200 -s 10.51.127.90 -j ACCEPT
 ```
