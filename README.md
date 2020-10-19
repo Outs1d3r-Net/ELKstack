@@ -280,8 +280,96 @@ $ sudo su
 $ echo '' > /var/lib/filebeat/registry/filebeat/log.json && exit
 $ sudo service filebeat restart
 ```
+## Configurando Elk em nós separados:
+> O objetivo desta sessão é instalar cada um dos programas que forma a pilha elk em servidores dedicados de forma segura.  
+> Para isso configuramos alguns dos hosts para serem acessados por qualquer maquina na rede e depois restringimos o acesso com o iptables.
+> Esta configuração fará com que o ELK seja acessivel somente pelo proxy nginx com usuario e senha configurados no proxy.
 
-### Arquivos de logs:
+### Criando hosts com multipass:
+```
+sudo multipass launch --name ELK-elastic --disk 10G --mem 3G
+sudo multipass launch --name ELK-kibana --disk 10G --mem 2G
+sudo multipass launch --name ELK-logstash --disk 10G --mem 2G
+sudo multipass launch --name ELK-nginx --disk 10G --mem 1G
+sudo multipass list
+```
+### Para todos os hosts:
+> Obs: Atualize e instale o java em todos os nós.
+```
+$ sudo apt update
+$ sudo apt install default-jre -y
+```
+### Instalando iptables-persistent:
+> Instale o iptables nos hosts do Elasticsearch e Kibana.
+```
+$ sudo apt install iptables-persistent -y
+$ sudo systemctl enable netfilter-persistent
+```
+### Elasticsearch  
+#### Libere o Elastisearch para qualquer host na rede alterando as linhas do arquivo:  
+```
+$ sudo vi /etc/elasticsearch/elasticsearch.yml
+```
+```
+cluster.initial_master_nodes: node-1
+network.host: 0.0.0.0
+```
+#### Bloqueando todos os acessos ao Elasticsearch:
+```
+$ sudo iptables -A INPUT -p tcp --destination-port 9200 -j DROP
+```
+#### Liberando acesso para o Kibana:
+> Altere o ip 10.51.127.145 para o ip do servidor do kibana.
+```
+$ sudo iptables -I INPUT -p tcp --destination-port 9200 -s 10.51.127.145 -j ACCEPT
+```
+#### Liberando acesso para o Logstash:
+> Altere o ip 10.51.127.152 para o ip do servidor do logstash.
+```
+$ sudo iptables -I INPUT -p tcp --destination-port 9200 -s 10.51.127.152 -j ACCEPT 
+```
+#### Salve as regras do firewall e reinicie o elasticsearch:  
+```
+$ sudo service netfilter-persistent save
+$ sudo service elasticsearch restart
+```
+### Kibana  
+#### Libere o Kibana para qualquer host na rede alterando as linhas do arquivo:
+```
+$ sudo vi /etc/kibana/kibana.yml
+```
+```
+server.host: "0.0.0.0"
+
+```
+#### Bloqueando todos os acessos ao Kibana:
+```
+$ sudo iptables -A INPUT -p tcp --destination-port 5601 -j DROP
+```
+#### Liberando acesso para o nginx:
+> Altere o ip 10.51.127.90 para o ip do servidor do nginx.
+```
+$ sudo iptables -I INPUT -p tcp --destination-port 9200 -s 10.51.127.90 -j ACCEPT
+```
+#### Salve as regras de firewall e reinicie o kibana:  
+```
+$ sudo service netfilter-persistent save
+$ sudo service kibana restart
+```
+### Logstash
+> Altere o ip do elasticsearch no arquivo /etc/logstash/conf.d/pipeline.conf  
+
+### Nginx
+> Altere o proxy_pass no arquivo default:
+```
+$ sudo vi /etc/nginx/site-available/default
+```
+#### Altere para o ip do kibana:  
+```
+proxy_pass http://10.51.127.145:5601;
+```
+
+## Arquivos de logs:
 ##### Se voce precisa de arquivos de logs para analisar e nao pode reproduzir um no momento, consulte meu projeto [fictitious.iocs](https://github.com/Outs1d3r-Net/fictitious.iocs "fictitious.iocs") se trata de um projeto com um log do apache que sofreu diversos tipos de ataques ciberneticos.
 
 :brazil:
